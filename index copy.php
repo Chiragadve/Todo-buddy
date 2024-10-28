@@ -17,11 +17,11 @@
       </div>
       <button id="addTaskBtn">Add New Task</button>
       <span class="todaytask">Today's Tasks</span>
-      <p id="allTasksBtn" class="task-filter">All Tasks</p>
-      <p id="completedTasksBtn" class="task-filter">Completed Tasks</p>
-      <p id="uncompletedTasksBtn" class="task-filter">Uncompleted Tasks</p>
+      <p>All Tasks</p>
+      <p>Important Tasks</p>
+      <p>Completed Tasks</p>
+      <p>Uncompleted Tasks</p>
     </div>
-
 
     <!-- Main Section -->
     <div class="main-section section">
@@ -31,7 +31,11 @@
       </div>
 
       <h3>All Tasks (<span id="taskCount">0</span> Tasks)</h3>
-
+      <p>Sort by:</p>
+      <select id="sortOptions">
+        <option value="due_date">Due Date</option>
+        <option value="priority">Priority</option>
+      </select>
 
       <!-- Tasks List -->
       <div class="task-list" id="taskList"></div>
@@ -46,14 +50,11 @@
         fetchTasks();
 
         // Function to fetch and display tasks
-        function fetchTasks(searchTerm = '') {
+        function fetchTasks() {
           $.ajax({
             url: 'fetch_tasks.php',
             type: 'GET',
             dataType: 'json',
-            data: {
-              search: searchTerm
-            }, // Send search term if exists
             success: function(response) {
               if (response.status === 'success') {
                 displayTasks(response.tasks);
@@ -71,8 +72,6 @@
         function displayTasks(tasks) {
           const taskList = $('#taskList');
           taskList.empty();
-
-          let completedCount = 0;
 
           tasks.forEach((task) => {
             const isCompleted = task.status == 1; // Check if task is completed
@@ -94,19 +93,9 @@
               </div>
             `;
             taskList.append(taskItem);
-
-            if (isCompleted) completedCount++;
           });
 
           $('#taskCount').text(tasks.length);
-          updateProgress(completedCount, tasks.length); // Update progress bar
-        }
-
-        // Update progress bar based on completed tasks
-        function updateProgress(completed, total) {
-          const progress = (completed / total) * 100 || 0; // Avoid division by zero
-          $('#file').val(progress);
-          $('#file').next('p').text(`${Math.round(progress)}%`); // Update percentage display
         }
 
         // Handle task deletion
@@ -122,7 +111,7 @@
             dataType: 'json',
             success: function(response) {
               if (response.status === 'success') {
-                fetchTasks(); // Refresh task list
+                fetchTasks();
               } else {
                 displayMessage('Failed to delete task.');
               }
@@ -151,7 +140,6 @@
               if (response.status === 'success') {
                 // Update the UI based on the checked status
                 updateTaskUI(taskItem, isChecked);
-                fetchTasks(); // Refresh task list to update progress
               } else {
                 displayMessage('Failed to update task status.');
               }
@@ -200,7 +188,7 @@
             dataType: 'json',
             success: function(response) {
               if (response.status === 'success') {
-                fetchTasks(); // Refresh task list
+                fetchTasks();
                 $('#taskForm')[0].reset();
                 $('#taskPopup').fadeOut();
               } else {
@@ -211,12 +199,6 @@
               displayMessage('An error occurred while adding the task.');
             },
           });
-        });
-
-        // Search functionality
-        $('#searchBtn').on('click', function() {
-          const searchTerm = $('#search').val().trim();
-          fetchTasks(searchTerm); // Fetch tasks with search term
         });
 
         // Display messages in a dedicated area
@@ -230,8 +212,8 @@
     <div class="right-section column section">
       <p>Sidebar</p>
       <p>All Tasks Progress</p>
-      <progress id="file" value="0" max="100">0%</progress>
-      <p>0%</p>
+      <progress id="file" value="66" max="100">66%</progress>
+      <p>66%</p>
     </div>
   </div>
 
@@ -261,6 +243,7 @@
       <div id="message" style="margin-top: 10px;"></div>
     </div>
   </div>
+
 </body>
 
 </html>

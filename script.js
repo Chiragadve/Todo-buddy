@@ -47,24 +47,40 @@ function displayTasks(tasks) {
 }
 
 // Handle checkbox change
+// Handle checkbox change
 $(document).on("change", 'input[type="checkbox"]', function () {
   const taskItem = $(this).closest(".task-item");
-  const taskId = taskItem.data("id"); // Get the task ID
+  const taskId = $(this).data("id"); // Get the task ID
+  const isCompleted = $(this).is(":checked") ? 1 : 0;
 
-  if ($(this).is(":checked")) {
-    // Mark the task as completed
-    taskItem.addClass("completed"); // Add completed class
-    taskItem
-      .find("p")
-      .css({ "text-decoration": "line-through", color: "#888" }); // Apply strikethrough and fade color
-    $("#taskList").append(taskItem); // Move task to bottom
-  } else {
-    // Mark the task as not completed
-    taskItem.removeClass("completed"); // Remove completed class
-    taskItem.find("p").css({ "text-decoration": "none", color: "" }); // Remove strikethrough and reset color
-    $("#taskList").prepend(taskItem); // Move back to the top
-  }
-
-  // Prevent any unwanted output
-  return false; // Prevent any default behavior that may cause the object to be outputted
+  // Send AJAX request to update status
+  $.ajax({
+    url: "update_task_status.php",
+    type: "POST",
+    data: {
+      task_id: taskId,
+      completed: isCompleted,
+    },
+    dataType: "json",
+    success: function (response) {
+      if (response.status === "success") {
+        if (response.completed) {
+          // Task is marked as completed
+          taskItem.addClass("completed");
+          taskItem
+            .find("p")
+            .css({ "text-decoration": "line-through", color: "#888" });
+        } else {
+          // Task is marked as not completed
+          taskItem.removeClass("completed");
+          taskItem.find("p").css({ "text-decoration": "none", color: "" });
+        }
+        // Optionally, you can append/prepend to the task list here if needed
+        // For example, if you want to keep the order of tasks unchanged, do not modify task list here
+      }
+    },
+    error: function () {
+      console.error("Error updating task status");
+    },
+  });
 });

@@ -1,23 +1,15 @@
 <?php
-// Include your database connection file
-include 'dbh.inc.php'; // Assumes this file contains your $conn connection
+require 'dbh.inc.php'; // Include your database connection
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $task_id = intval($_POST['task_id']);
-    $completed = intval($_POST['completed']); // 1 for completed, 0 for not completed
+    $taskId = $_POST['task_id'];
+    $status = $_POST['status'];
 
-    // Prepare and execute the SQL query
-    $stmt = $conn->prepare("UPDATE tasks SET status = ? WHERE task_id = ?");
-    $stmt->bind_param("ii", $completed, $task_id);
-
-    if ($stmt->execute()) {
+    // Prepare and execute the SQL statement to update the status
+    $stmt = $pdo->prepare("UPDATE tasks SET status = ? WHERE task_id = ?");
+    if ($stmt->execute([$status, $taskId])) {
         echo json_encode(['status' => 'success']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to update status']);
+        echo json_encode(['status' => 'error']);
     }
-
-    $stmt->close();
-    $conn->close();
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
 }
