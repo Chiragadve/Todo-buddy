@@ -99,10 +99,18 @@
 }
 
 .task-list {
-  max-height: 400px; /* Set a maximum height for the task list */
+  max-height: 570px; /* Set a maximum height for the task list */
   overflow-y: auto; /* Enable vertical scrolling */
   padding: 10px; /* Optional: add some padding */
   margin-top: 10px; /* Optional: space above the list */
+  transition: opacity 0.3s ease-in-out; /* Smooth transition effect */
+  opacity: 1; /* Start fully visible */
+}
+.task-list {
+}
+
+.task-list.hidden {
+  opacity: 0; /* Fade out when hidden */
 }
 
 .search-container {
@@ -354,4 +362,92 @@ progress::-webkit-progress-bar {
 
 progress::-webkit-progress-value {
   background-color: var(--primary-color);
+}
+
+/* Existing styles... */
+
+/* Update Task Section */
+.main-section {
+  flex: 3;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.main-section input {
+  padding: 12px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.main-section h3 {
+  margin-top: 10px;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+/* Task List Layout */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Task Item: Long Horizontal Rectangle */
+.task-item {
+  background-color: var(--task-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.task-item:hover {
+  background-color: var(--hover-bg);
+}
+
+.task-item p {
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.task-item button {
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.task-item button:hover {
+  background-color: #009975;
+}
+.addTaskBtn {
+  background-color: #4caf50; /* Green background */
+  border: none; /* No border */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding around the text */
+  text-align: center; /* Centered text */
+  text-decoration: none; /* No underline */
+  display: inline-block; /* Allow padding */
+  font-size: 16px; /* Increase font size */
+  margin: 4px 2px; /* Space around the button */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+/* Change background color on hover */
+.addTaskBtn:hover {
+  background-color: #45a049; /* Darker green */
 }

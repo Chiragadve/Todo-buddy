@@ -84,3 +84,17 @@ $(document).on("change", 'input[type="checkbox"]', function () {
     },
   });
 });
+// Open the "Add Task" popup
+$("#addTaskBtn").on("click", function () {
+  setTimeout(function () {
+    $("#taskPopup").fadeIn();
+  }, 50); // Delay to reduce flicker
+  $("#taskForm")[0].reset(); // Reset form for new task
+  $("#taskPopupTitle").text("Add New Task"); // Set title
+  $("#taskId").val(""); // Clear hidden task ID
+});
+
+// Close the popup when clicking the close button
+$(document).on("click", ".close-btn", function () {
+  $("#taskPopup").fadeOut();
+});

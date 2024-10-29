@@ -17,10 +17,9 @@
       </div>
       <button id="addTaskBtn">Add New Task</button>
       <span class="todaytask">Today's Tasks</span>
-      <p>All Tasks</p>
-      <p>Important Tasks</p>
-      <p>Completed Tasks</p>
-      <p>Uncompleted Tasks</p>
+      <p id="allTasksBtn" class="task-filter">All Tasks</p>
+      <p id="completedTasksBtn" class="task-filter">Completed Tasks</p>
+      <p id="uncompletedTasksBtn" class="task-filter">Uncompleted Tasks</p>
     </div>
 
     <!-- Main Section -->
@@ -31,11 +30,6 @@
       </div>
 
       <h3>All Tasks (<span id="taskCount">0</span> Tasks)</h3>
-      <p>Sort by:</p>
-      <select id="sortOptions">
-        <option value="due_date">Due Date</option>
-        <option value="priority">Priority</option>
-      </select>
 
       <!-- Tasks List -->
       <div class="task-list" id="taskList"></div>
@@ -50,11 +44,14 @@
         fetchTasks();
 
         // Function to fetch and display tasks
-        function fetchTasks() {
+        function fetchTasks(searchTerm = '') {
           $.ajax({
             url: 'fetch_tasks.php',
             type: 'GET',
             dataType: 'json',
+            data: {
+              search: searchTerm
+            }, // Send search term if exists
             success: function(response) {
               if (response.status === 'success') {
                 displayTasks(response.tasks);
@@ -73,6 +70,8 @@
           const taskList = $('#taskList');
           taskList.empty();
 
+          let completedCount = 0;
+
           tasks.forEach((task) => {
             const isCompleted = task.status == 1; // Check if task is completed
             const checked = isCompleted ? 'checked' : '';
@@ -88,14 +87,25 @@
                   </p>
                 </div>
                 <div class="task-item-right">
+                  <button class="edit" data-id="${task.task_id}" data-title="${task.title}" data-due_date="${task.due_date}" data-description="${task.description || ''}">Edit</button>
                   <button class="delete red" data-id="${task.task_id}">Delete</button>
                 </div>
               </div>
             `;
             taskList.append(taskItem);
+
+            if (isCompleted) completedCount++;
           });
 
           $('#taskCount').text(tasks.length);
+          updateProgress(completedCount, tasks.length); // Update progress bar
+        }
+
+        // Update progress bar based on completed tasks
+        function updateProgress(completed, total) {
+          const progress = (completed / total) * 100 || 0; // Avoid division by zero
+          $('#file').val(progress);
+          $('#file').next('p').text(`${Math.round(progress)}%`); // Update percentage display
         }
 
         // Handle task deletion
@@ -111,7 +121,7 @@
             dataType: 'json',
             success: function(response) {
               if (response.status === 'success') {
-                fetchTasks();
+                fetchTasks(); // Refresh task list
               } else {
                 displayMessage('Failed to delete task.');
               }
@@ -140,6 +150,7 @@
               if (response.status === 'success') {
                 // Update the UI based on the checked status
                 updateTaskUI(taskItem, isChecked);
+                fetchTasks(); // Refresh task list to update progress
               } else {
                 displayMessage('Failed to update task status.');
               }
@@ -170,6 +181,9 @@
         // Open the "Add Task" popup
         $('#addTaskBtn').on('click', function() {
           $('#taskPopup').fadeIn();
+          $('#taskForm')[0].reset(); // Reset form for new task
+          $('#taskPopupTitle').text('Add New Task'); // Set title
+          $('#taskId').val(''); // Clear hidden task ID
         });
 
         // Close the popup when clicking the close button
@@ -181,24 +195,49 @@
         $('#taskForm').on('submit', function(e) {
           e.preventDefault();
 
+          const taskId = $('#taskId').val();
+          const url = taskId ? 'update_task.php' : 'add_task.php'; // Determine the URL based on task ID
+
           $.ajax({
-            url: 'add_task.php',
+            url: url,
             type: 'POST',
             data: $(this).serialize(),
             dataType: 'json',
             success: function(response) {
               if (response.status === 'success') {
-                fetchTasks();
+                fetchTasks(); // Refresh task list
                 $('#taskForm')[0].reset();
                 $('#taskPopup').fadeOut();
               } else {
-                displayMessage('Failed to add task.');
+                displayMessage('Failed to add/update task.');
               }
             },
             error: function() {
-              displayMessage('An error occurred while adding the task.');
+              displayMessage('An error occurred while adding/updating the task.');
             },
           });
+        });
+
+        // Edit task
+        $(document).on('click', '.edit', function() {
+          const taskId = $(this).data('id');
+          const title = $(this).data('title');
+          const dueDate = $(this).data('due_date');
+          const description = $(this).data('description');
+
+          $('#taskId').val(taskId); // Set hidden task ID
+          $('#title').val(title); // Set title
+          $('#date').val(dueDate); // Set due date
+          $('#description').val(description); // Set description
+
+          $('#taskPopup').fadeIn(); // Open the popup for editing
+          $('#taskPopupTitle').text('Edit Task'); // Set title for popup
+        });
+
+        // Search functionality
+        $('#searchBtn').on('click', function() {
+          const searchTerm = $('#search').val().trim();
+          fetchTasks(searchTerm); // Fetch tasks with search term
         });
 
         // Display messages in a dedicated area
@@ -212,8 +251,8 @@
     <div class="right-section column section">
       <p>Sidebar</p>
       <p>All Tasks Progress</p>
-      <progress id="file" value="66" max="100">66%</progress>
-      <p>66%</p>
+      <progress id="file" value="0" max="100">0%</progress>
+      <p>0%</p>
     </div>
   </div>
 
@@ -221,8 +260,9 @@
   <div id="taskPopup" class="popup">
     <div class="popup-content">
       <span class="close-btn">&times;</span>
-      <h2>Add New Task</h2>
+      <h2 id="taskPopupTitle">Add New Task</h2>
       <form id="taskForm">
+        <input type="hidden" id="taskId" name="task_id" /> <!-- Hidden field for task ID -->
         <div class="form-group">
           <label for="title">Title</label>
           <input type="text" id="title" name="title" required />
@@ -243,7 +283,6 @@
       <div id="message" style="margin-top: 10px;"></div>
     </div>
   </div>
-
 </body>
 
 </html>

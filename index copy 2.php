@@ -276,7 +276,7 @@
         <input type="date" id="date" name="due_date" required />
         <label for="description">Description:</label>
         <textarea id="description" name="description"></textarea>
-        <button class="addTaskBtn" type="submit">Save Task</button>
+        <button id="" type="submit">Save Task</button>
       </form>
     </div>
   </div>
