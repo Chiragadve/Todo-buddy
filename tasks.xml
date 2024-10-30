@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tasks>
+    <task>
+        <task_id>1</task_id>
+        <title>Sample Task</title>
+        <description>No description</description>
+        <due_date>2024-11-01</due_date>
+        <status>1</status>
+    </task>
+    <!-- More tasks here -->
+    <task>
+        <task_id>108</task_id>
+        <title>How am i fuck</title>
+        <description>good enough</description>
+        <due_date>2024-10-11</due_date>
+        <status>0</status>
+        <created_at>2024-10-30 08:09:35</created_at>
+    </task>
+    <task>
+        <task_id>109</task_id>
+        <title>Do IP project</title>
+        <description>do it on priority</description>
+        <due_date>2024-10-18</due_date>
+        <status>0</status>
+        <created_at>2024-10-30 08:12:19</created_at>
+    </task>
+    <task>
+        <task_id>110</task_id>
+        <title>Do homework</title>
+        <description>asdf</description>
+        <due_date>2024-10-31</due_date>
+        <status>0</status>
+        <created_at>2024-10-30 08:13:00</created_at>
+    </task>
+</tasks>
