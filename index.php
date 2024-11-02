@@ -4,8 +4,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Todolist</title>
+  <title>Todo Buddy</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="mediaqueries.css" />
+  <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMA1P0eFq3Kbew1XNz6EfhcuJq06vl2gfRWA&s">
+
 </head>
 
 <body>
@@ -37,7 +40,7 @@
 
     <!-- Right Section -->
     <div class="right-section column section">
-      <p>Sidebar</p>
+      <p>Progress Bar</p>
       <p>All Tasks Progress</p>
       <progress id="file" value="0" max="100">0%</progress>
       <p>0%</p>
